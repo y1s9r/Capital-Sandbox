@@ -3,5 +3,8 @@
 {% block title %}Home{% endblock %}
 
 {% block body %}
-    
+    <h1>Logged in!</h1>
+    <form action="/logout" method="get">
+        <button type="submit">Log out</button>
+    </form>
 {% endblock %}

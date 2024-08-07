@@ -1,0 +1,7 @@
+{% extends "layout.html" %}
+
+{% block title %}Error {{ errorcode }}{% endblock %}
+
+{% block body %}
+    <h1>Error {{ errorcode }}: {{message}}!</h1>
+{% endblock %}
