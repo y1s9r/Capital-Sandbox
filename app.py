@@ -23,26 +23,7 @@ def main():
     return render_template("index.html")
 
 
-@app.route("/quote", methods = ["GET", "POST"])
-def quote():
-    if not login_check():
-        return redirect("/login")
-    if request.method == "POST":
-        symbol = request.form.get("symbol").lower()
-        if not symbol:
-            return redirect("/quote")
-        url = f"https://api.coincap.io/v2/assets/{symbol}"
-        response = requests.get(url, headers=headers)
-        if not response:
-            return render_template("error.html", errorcode="404", message="no response")
-        data = response.json()
-        print(data)
-        price = data["data"]["priceUsd"]
-        return render_template("quoted.html", symbol=symbol, price=price)
-    return render_template("quote.html")
-
-
-@app.route("/login", methods=["GET", "POST"])
+@app.route("/login", methods=["GET", "POST"]) # DESIGN PAGE
 def login():
     session.clear()
     if request.method == "POST":
@@ -68,7 +49,7 @@ def logout():
     return redirect("/login")
 
 
-@app.route("/register", methods=["GET", "POST"])
+@app.route("/register", methods=["GET", "POST"]) # DESIGN PAGE
 def register():
     session.clear()
     if request.method == "POST":
@@ -78,7 +59,7 @@ def register():
         if not name or not password or not confirm:
             return redirect("/register")
         if password != confirm:
-            return render_template("error.html", errorcode="400", message="Password does not match")
+            return render_template("error.html", errorcode="400", message="Password does not match") # DESIGN PAGE
         passhash = generate_password_hash(password)
         conn = get_db_connection()
         cursor = conn.cursor()
@@ -93,3 +74,35 @@ def register():
         session["user_id"] = id["id"]
         return redirect("/")
     return render_template("register.html")
+
+
+@app.route("/quote", methods = ["GET", "POST"]) # DESIGN PAGE
+def quote():
+    if not login_check():
+        return redirect("/login")
+    if request.method == "POST":
+        crypto = request.form.get("crypto").lower()
+        if not crypto:
+            return redirect("/quote")
+        url = f"https://api.coincap.io/v2/assets/{crypto}"
+        response = requests.get(url, headers=headers)
+        if not response:
+            return render_template("error.html", errorcode="404", message="no response")
+        data = response.json()
+        print(data)
+        price = data["data"]["priceUsd"] # ADD FUNCTIONALITY TO DISPLAY ALL THE INFO NOT JUST PRICE
+        return render_template("quoted.html", crypto=crypto, price=price)
+    return render_template("quote.html")
+
+
+@app.route("/buy", methods = ["GET", "POST"])
+def buy():
+    if not login_check:
+        return redirect("/")
+    if request.method == "POST":
+        name = request.form.get("name")
+        quantity = request.form.get("quantity")
+        if not name or quantity:
+            return redirect ("/buy")
+        url = f"https://api.coincap.io/v2/assets/{symbol}"
+        response = requests.get(url, headers=headers)
