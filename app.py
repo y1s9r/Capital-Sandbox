@@ -13,9 +13,15 @@ sqliteConnection = sqlite3.connect('database.db')
 cursor = sqliteConnection.cursor()
 
 
+def login_check():
+    if session.get("user_id") is None:
+        return redirect("/login")
+
+
 @app.route("/")
 def main():
-    return
+    login_check()
+    return render_template("index.html")
 
 
 @app.route("/login")
