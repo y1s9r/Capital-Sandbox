@@ -1,9 +1,8 @@
 from flask import Flask, render_template, request, session, redirect
 from flask_session import Session
 from werkzeug.security import generate_password_hash, check_password_hash
-import sqlite3
-from helper import login_check, get_db_connection
 import requests
+from helper import login_check, get_db_connection
 
 app = Flask(__name__)
 app.config["SESSION_PERMANENT"] = False
@@ -14,6 +13,14 @@ headers = {
     "Accept-Encoding": "gzip, deflate",
     "Authorization": "Bearer fbeb3e0c-a16c-4726-8f7b-242918872dc9"
 }
+
+
+@app.after_request
+def after_request(response):
+    response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+    response.headers["Expires"] = 0
+    response.headers["Pragma"] = "no-cache"
+    return response
 
 
 @app.route("/")
