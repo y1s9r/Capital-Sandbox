@@ -88,17 +88,17 @@ def quote():
     if not login_check():
         return redirect("/login")
     if request.method == "POST":
-        crypto = request.form.get("crypto").lower()
-        if not crypto:
+        symbol = request.form.get("symbol").lower()
+        if not symbol:
             return redirect("/quote")
-        url = f"https://api.coincap.io/v2/assets/{crypto}"
+        url = f"https://api.coincap.io/v2/assets/{symbol}"
         response = requests.get(url, headers=headers)
         if not response:
             return render_template("error.html", errorcode="404", message="no response")
         data = response.json()
         print(data)
         price = data["data"]["priceUsd"] # ADD FUNCTIONALITY TO DISPLAY ALL THE INFO NOT JUST PRICE
-        return render_template("quoted.html", crypto=crypto, price=price)
+        return render_template("quoted.html", symbol=symbol, price=price)
     return render_template("quote.html")
 
 
@@ -107,9 +107,9 @@ def buy():
     if not login_check:
         return redirect("/")
     if request.method == "POST":
-        name = request.form.get("name")
+        symbol = request.form.get("symbol")
         quantity = request.form.get("quantity")
-        if not name or quantity:
+        if not symbol or quantity:
             return redirect ("/buy")
         url = f"https://api.coincap.io/v2/assets/{symbol}"
         response = requests.get(url, headers=headers)
