@@ -2,6 +2,7 @@ import sqlite3
 from flask import session
 from yahoo_fin import stock_info
 import numpy
+from flask import session
 
 
 def get_db_connection():
@@ -26,3 +27,16 @@ def lookup(symbol):
     except (ValueError, TypeError, AssertionError) as e:
         print(f"Error retrieving data for {symbol}: {e}")
         return None
+    
+
+def get_wallet():
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute("SELECT cash FROM users WHERE id = ?", (session["user_id"],))
+        wallet_row = cursor.fetchone()
+        if not wallet_row:
+            conn.close()
+            return None
+        wallet = float(wallet_row[0])  # Ensure wallet is a float
+        conn.close()
+        return wallet
