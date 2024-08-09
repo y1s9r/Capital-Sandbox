@@ -2,7 +2,8 @@ from flask import Flask, render_template, request, session, redirect
 from flask_session import Session
 from werkzeug.security import generate_password_hash, check_password_hash
 import requests
-from helper import login_check, get_db_connection
+from helper import login_check, get_db_connection, lookup
+
 
 app = Flask(__name__)
 app.config["SESSION_PERMANENT"] = False
@@ -88,16 +89,13 @@ def quote():
     if not login_check():
         return redirect("/login")
     if request.method == "POST":
-        symbol = request.form.get("symbol").lower()
+        symbol = request.form.get("symbol")
         if not symbol:
             return redirect("/quote")
-        url = f"https://api.coincap.io/v2/assets/{symbol}"
-        response = requests.get(url, headers=headers)
-        if not response:
-            return render_template("error.html", errorcode="404", message="no response")
-        data = response.json()
-        print(data)
-        price = data["data"]["priceUsd"] # ADD FUNCTIONALITY TO DISPLAY ALL THE INFO NOT JUST PRICE
+        data = lookup(symbol)
+        if not data:
+            return render_template("error.html", errorcode="400", message="Invalid Stock")
+        price = data["price"]
         return render_template("quoted.html", symbol=symbol, price=price)
     return render_template("quote.html")
 
@@ -111,5 +109,24 @@ def buy():
         quantity = request.form.get("quantity")
         if not symbol or quantity:
             return redirect ("/buy")
-        url = f"https://api.coincap.io/v2/assets/{symbol}"
-        response = requests.get(url, headers=headers)
+        if quantity <= 0:
+            return render_template("error.html", errorcode="400", message="Invalid quantity of Stock")
+        data = lookup(symbol)
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute("SELECT cash FROM users WHERE id = ?", session["user_id"])
+        wallet = int(cursor.fetchone)
+        conn.close()
+        price = int(data["price"]) * quantity
+        if price > wallet:
+            return render_template("error.html", errorcode="400", message="You do not have enough money to buy these many shares")
+        else:
+            wallet = wallet - price
+            conn = get_db_connection()
+            cursor = conn.cursor()
+            cursor.execute("INSERT INTO transactions (user_id, symbol, shares, cost) VALUES(?, ?, ?, ?)", session["user_id"], symbol, quantity, price)
+            cursor.execute("UPDATE users SET cash = ? WHERE id = ?", wallet, session["user_id"])
+            conn.commit()
+            conn.close()
+            return redirect("/")
+    return render_template("buy.html")
