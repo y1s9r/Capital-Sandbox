@@ -43,7 +43,6 @@ def main():
             holdings[i] = (symbol, total_shares, total_price)
         else:
             holdings[i] = (symbol, total_shares, "N/A")
-    print(holdings)
     return render_template("index.html", holdings=holdings, wallet=wallet, total=total)
 
 
@@ -188,3 +187,15 @@ def sell():
         conn.close()
         return redirect("/")
     return render_template("sell.html")
+
+
+@app.route("/history")
+def history():
+    if not login_check:
+        return redirect("/")
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT symbol, shares, cost, timestamp FROM transactions WHERE user_id = ? LIMIT 20", (session["user_id"],))
+    data = cursor.fetchall()
+    conn.close()
+    return render_template("history.html", transactions=data)
