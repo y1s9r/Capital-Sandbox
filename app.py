@@ -9,11 +9,6 @@ app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 
-headers = {
-    "Accept-Encoding": "gzip, deflate",
-    "Authorization": "Bearer fbeb3e0c-a16c-4726-8f7b-242918872dc9"
-}
-
 
 @app.after_request
 def after_request(response):
