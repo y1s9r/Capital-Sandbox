@@ -104,7 +104,7 @@ def buy():
     if not login_check():
         return redirect("/")
     if request.method == "POST":
-        symbol = request.form.get("symbol")
+        symbol = request.form.get("symbol").lower()
         quantity = request.form.get("quantity")
         if not symbol or not quantity:
             return redirect("/buy")
@@ -125,9 +125,49 @@ def buy():
         wallet -= price
         conn = get_db_connection()
         cursor = conn.cursor()
-        cursor.execute("INSERT INTO transactions (user_id, symbol, shares, cost) VALUES (?, ?, ?, ?)", (session["user_id"], symbol, quantity, price))
+        cursor.execute("INSERT INTO transactions (user_id, symbol, shares, cost) VALUES (?, ?, ?, ?)", (session["user_id"], data["symbol"], quantity, price))
         cursor.execute("UPDATE users SET cash = ? WHERE id = ?", (wallet, session["user_id"]))
         conn.commit()
         conn.close()
         return redirect("/")
     return render_template("buy.html")
+
+
+@app.route("/sell", methods=["GET", "POST"])
+def sell():
+    if not login_check():
+        return redirect("/")
+    
+    if request.method == "POST":
+        symbol = request.form.get("symbol").lower()
+        shares = request.form.get("shares")
+        if not symbol or not shares:
+            return redirect("/sell")
+        try:
+            shares = int(shares)
+            if shares <= 0:
+                return render_template("error.html", errorcode="400", message="Invalid number of shares")
+        except ValueError:
+            return render_template("error.html", errorcode="400", message="Shares must be a valid number")
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute("SELECT SUM(shares) AS total_shares FROM transactions WHERE user_id = ? AND symbol = ?", (session["user_id"], symbol))
+        holding_row = cursor.fetchone()
+        conn.close()
+        if not holding_row or holding_row[0] is None or int(holding_row[0]) < shares:
+            return render_template("error.html", errorcode="400", message="You do not own that many shares")
+        data = lookup(symbol)
+        if not data:
+            return render_template("error.html", errorcode="400", message="Invalid stock symbol")
+        price = data["price"]
+        total_sale_value = float(price) * shares
+        wallet = get_wallet()
+        wallet += total_sale_value
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute("INSERT INTO transactions (user_id, symbol, shares, cost) VALUES (?, ?, ?, ?)", (session["user_id"], symbol, -shares, -total_sale_value))
+        cursor.execute("UPDATE users SET cash = ? WHERE id = ?", (wallet, session["user_id"]))
+        conn.commit()
+        conn.close()
+        return redirect("/")
+    return render_template("sell.html")
