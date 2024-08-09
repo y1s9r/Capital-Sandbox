@@ -1,7 +1,6 @@
 from flask import Flask, render_template, request, session, redirect
 from flask_session import Session
 from werkzeug.security import generate_password_hash, check_password_hash
-import requests
 from helper import login_check, get_db_connection, lookup, get_wallet
 
 
@@ -119,11 +118,7 @@ def buy():
         data = lookup(symbol)
         if not data:
             return render_template("error.html", errorcode="400", message="Invalid stock symbol")
-        
-
         wallet = get_wallet()
-
-
         price = float(data["price"]) * quantity
         if price > wallet:
             return render_template("error.html", errorcode="400", message="You do not have enough money to buy these many shares")
