@@ -27,7 +27,24 @@ def after_request(response):
 def main():
     if not login_check():
         return redirect("/login")
-    return render_template("index.html")
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT symbol, SUM(shares) AS total_shares FROM transactions WHERE user_id = ? GROUP BY symbol HAVING SUM(shares) > 0 ORDER BY symbol asc", (session["user_id"],))
+    holdings = cursor.fetchall()
+    conn.close()
+    wallet = get_wallet()
+    total = 0.0 + wallet
+    for i in range(len(holdings)):
+        symbol, total_shares = holdings[i]
+        price_info = lookup(symbol)
+        if price_info is not None:
+            total_price = float(float(price_info['price']) * int(total_shares))
+            total = total + total_price
+            holdings[i] = (symbol, total_shares, total_price)
+        else:
+            holdings[i] = (symbol, total_shares, "N/A")
+    print(holdings)
+    return render_template("index.html", holdings=holdings, wallet=wallet, total=total)
 
 
 @app.route("/login", methods=["GET", "POST"]) # DESIGN PAGE
