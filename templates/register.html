@@ -3,13 +3,27 @@
 {% block title %}Register{% endblock %}
 
 {% block body %}
-    <form action = "/register" method="post">
-        <h1>Enter your username</h1>
-        <input type="text" name="name" placeholder="Name" autofocus autocomplete="off">
-        <h1>Enter your password</h1>
-        <input type="password" name="password" placeholder="Password" autocomplete="off">
-        <h1>Confirm your password</h1>
-        <input type="password" name="confirm" placeholder="Confirm Password" autocomplete="off">
-        <button type="submit">Register</button>
-    </form>
+<div class="d-flex align-items-center" style="min-height: calc(100vh - 56px);">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-5 col-md-8 col-sm-10 rounded p-5" style="background-color: #F4DFC8; color: black; font-family: 'Poppins', sans-serif;">
+                <form action="/register" method="post">
+                    <h2 class="text-center mb-5">Create a New Account!</h2>
+                    <div class="mb-3">
+                        <input type="text" class="form-control" name="name" placeholder="Username" autofocus autocomplete="off">
+                    </div>
+                    <div class="mb-3">
+                        <input type="password" class="form-control" name="password" placeholder="Password" autocomplete="off">
+                    </div>
+                    <div class="mb-5">
+                        <input type="password" class="form-control" name="confirm" placeholder="Confirm Password" autocomplete="off">
+                    </div>
+                    <div class="text-center mb-5">
+                        <button type="submit" class="btn btn-primary btn-block w-100">Register</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}
