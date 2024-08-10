@@ -85,7 +85,7 @@ def register():
         cursor = conn.cursor()
         try:
             cursor.execute("INSERT INTO users (username, hash) VALUES(?, ?)", (name, passhash))
-        except ValueError:
+        except (ValueError, BaseException):
             return render_template("error.html", errorcode=400, message="Username is Already taken")
         conn.commit()
         cursor.execute("SELECT id FROM users WHERE username = ?", (name,))
@@ -192,7 +192,7 @@ def history():
         return redirect("/login")
     conn = get_db_connection()
     cursor = conn.cursor()
-    cursor.execute("SELECT symbol, shares, cost, timestamp FROM transactions WHERE user_id = ? LIMIT 20", (session["user_id"],))
+    cursor.execute("SELECT symbol, shares, cost, timestamp FROM transactions WHERE user_id = ? ORDER BY timestamp desc LIMIT 20", (session["user_id"],))
     data = cursor.fetchall()
     conn.close()
     return render_template("history.html", transactions=data)
