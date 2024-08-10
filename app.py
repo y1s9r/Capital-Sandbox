@@ -115,7 +115,7 @@ def quote():
 @app.route("/buy", methods=["GET", "POST"])
 def buy():
     if not login_check():
-        return redirect("/")
+        return redirect("/login")
     if request.method == "POST":
         symbol = request.form.get("symbol").lower()
         quantity = request.form.get("quantity")
@@ -149,7 +149,7 @@ def buy():
 @app.route("/sell", methods=["GET", "POST"])
 def sell():
     if not login_check():
-        return redirect("/")
+        return redirect("/login")
     
     if request.method == "POST":
         symbol = request.form.get("symbol").lower()
@@ -189,10 +189,31 @@ def sell():
 @app.route("/history")
 def history():
     if not login_check:
-        return redirect("/")
+        return redirect("/login")
     conn = get_db_connection()
     cursor = conn.cursor()
     cursor.execute("SELECT symbol, shares, cost, timestamp FROM transactions WHERE user_id = ? LIMIT 20", (session["user_id"],))
     data = cursor.fetchall()
     conn.close()
     return render_template("history.html", transactions=data)
+
+
+@app.route("/addmoney", methods=["GET","POST"])
+def addmoney():
+    if not login_check:
+        return redirect("/login")
+    if request.method == "POST":
+        money = request.form.get("money")
+        if not money or float(money) <= 0:
+            return render_template("error.html", errorcode="400", message="Invalid amount of money")
+        if float(money) > 25000:
+            return render_template("error.html", errorcode="400", message="You can not add more than $25000 at once")
+        wallet = get_wallet()
+        wallet += float(money)
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute("UPDATE users SET cash = ? WHERE id = ?", (wallet, session["user_id"]))
+        conn.commit()
+        conn.close()
+        return redirect("/")
+    return render_template("addmoney.html")
