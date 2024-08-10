@@ -3,9 +3,21 @@
 {% block title %}Quote{% endblock %}
 
 {% block body %}
-    <h1>Check Price</h1>
-    <form action="/quote" method="post">
-        <input type="text" name="symbol" placeholder="Stock Symbol" autofocus autocomplete="off">
-        <button type="submit">Quote</button>
-    </form>
+<div class="d-flex align-items-center" style="min-height: calc(100vh - 56px);">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-5 col-md-8 col-sm-10 rounded p-5" style="background-color: #F4DFC8; color: black; font-family: 'Poppins', sans-serif;">
+                <form action="/quote" method="post">
+                    <h1 class="text-center mb-4">Quote</h1>
+                    <div class="mb-5">
+                        <input type="text" class="form-control" name="symbol" placeholder="Stock Symbol" autofocus autocomplete="off">
+                    </div>
+                    <div class="text-center mb-5">
+                        <button type="submit" class="btn btn-primary btn-block w-100">Quote</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}

@@ -108,7 +108,7 @@ def quote():
         if not data:
             return render_template("error.html", errorcode="400", message="Invalid Stock")
         price = data["price"]
-        return render_template("quoted.html", symbol=symbol, price=price)
+        return render_template("quoted.html", symbol=symbol.upper(), price=price)
     return render_template("quote.html")
 
 
