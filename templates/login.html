@@ -3,11 +3,27 @@
 {% block title %}Login{% endblock %}
 
 {% block body %}
-    <form action = "/login" method="post">
-        <h1>Enter your username</h1>
-        <input type="text" name="name" placeholder="Name" autofocus autocomplete="off">
-        <h1>Enter your password</h1>
-        <input type="password" name="password" placeholder="Password" autocomplete="off">
-        <button type="submit">Log In</button>
-    </form>
+<div class="d-flex align-items-center" style="min-height: calc(100vh - 56px);">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-5 col-md-8 col-sm-10 rounded p-5" style="background-color: #F4DFC8; color: black; font-family: 'Poppins', sans-serif;">
+                <form action="/login" method="post">
+                    <h1 class="text-center mb-5">Welcome Back!</h1>
+                    <div class="mb-3">
+                        <input type="text" class="form-control" id="Inputusername1" name="name" placeholder="Username" autofocus autocomplete="off">
+                    </div>
+                    <div class="mb-5">
+                        <input type="password" class="form-control" id="InputPassword1" name="password" placeholder="Password" autocomplete="off">
+                    </div>
+                    <div class="text-center mb-5">
+                        <button type="submit" class="btn btn-primary btn-block w-100">Log In</button>
+                    </div>
+                    <div class="text-center">
+                        <p>Don't have an account? <a href="/register" class="text-primary">Register</a></p>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}
