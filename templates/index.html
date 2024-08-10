@@ -3,33 +3,34 @@
 {% block title %}Home{% endblock %}
 
 {% block body %}
-    <table class = "table table-striped">
-        <thead>
+<div class="container mt-5">
+    <table class="table table-striped" style="color: black; font-family: 'Poppins', sans-serif; border-radius: 0.5rem; overflow: hidden;">
+        <thead style="background-color: #F4DFC8;">
             <tr>
-                <th class = "text-start">Symbol</th>
-                <th class = "text-end">Shares</th>
-                <th class = "text-end">Total Value</th>
+                <th class="text-start" style="background-color: #F4DFC8;">Symbol</th>
+                <th class="text-end" style="background-color: #F4DFC8;">Shares</th>
+                <th class="text-end" style="background-color: #F4DFC8;">Total Value</th>
             </tr>
         </thead>
         <tbody>
             {% for symbol, total_shares, total_price in holdings %}
             <tr>
-                <td style="text-transform: uppercase;" class = "text-start">{{ symbol }}</td>
-                <td class = "text-end">{{ total_shares }}</td>
-                <td class = "text-end">{{ total_price }}</td>
+                <td style="text-transform: uppercase;" class="text-start">{{ symbol }}</td>
+                <td class="text-end">{{ total_shares }}</td>
+                <td class="text-end">{{ total_price | usd }}</td>
             </tr>
             {% endfor %}
         </tbody>
         <tfoot>
             <tr>
-                <th colspan="3" class = "text-end">Cash:</th>
-                <td class = "text-end">{{ wallet }}</td>
+                <th colspan="2" class="text-end" style="background-color: #F4DFC8;">Cash:</th>
+                <td class="text-end" style="background-color: #F4DFC8;">{{ wallet | usd }}</td>
             </tr>
             <tr>
-                <th colspan="3" class = "text-end">Total:</th>
-                <td class = "text-end">{{ total }}</td>
+                <th colspan="2" class="text-end" style="background-color: #F4DFC8;">Total:</th>
+                <td class="text-end" style="background-color: #F4DFC8;">{{ total | usd }}</td>
             </tr>
         </tfoot>
-
     </table>
+</div>
 {% endblock %}
