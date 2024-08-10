@@ -43,7 +43,7 @@ def main():
     return render_template("index.html", holdings=holdings, wallet=wallet, total=total)
 
 
-@app.route("/login", methods=["GET", "POST"]) # DESIGN PAGE
+@app.route("/login", methods=["GET", "POST"])
 def login():
     session.clear()
     if request.method == "POST":
@@ -69,7 +69,7 @@ def logout():
     return redirect("/login")
 
 
-@app.route("/register", methods=["GET", "POST"]) # DESIGN PAGE
+@app.route("/register", methods=["GET", "POST"]) 
 def register():
     session.clear()
     if request.method == "POST":
@@ -79,7 +79,7 @@ def register():
         if not name or not password or not confirm:
             return redirect("/register")
         if password != confirm:
-            return render_template("error.html", errorcode="400", message="Password does not match") # DESIGN PAGE
+            return render_template("error.html", errorcode="400", message="Password does not match")
         passhash = generate_password_hash(password)
         conn = get_db_connection()
         cursor = conn.cursor()
@@ -96,7 +96,7 @@ def register():
     return render_template("register.html")
 
 
-@app.route("/quote", methods = ["GET", "POST"]) # DESIGN PAGE
+@app.route("/quote", methods = ["GET", "POST"])
 def quote():
     if not login_check():
         return redirect("/login")
