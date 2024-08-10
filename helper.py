@@ -40,3 +40,7 @@ def get_wallet():
         wallet = float(wallet_row[0])  # Ensure wallet is a float
         conn.close()
         return wallet
+
+
+def usd(value):
+    return f"${value:,.2f}"

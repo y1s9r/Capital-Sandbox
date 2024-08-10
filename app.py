@@ -1,13 +1,15 @@
 from flask import Flask, render_template, request, session, redirect
 from flask_session import Session
 from werkzeug.security import generate_password_hash, check_password_hash
-from helper import login_check, get_db_connection, lookup, get_wallet
+from helper import login_check, get_db_connection, lookup, get_wallet, usd
 
 
 app = Flask(__name__)
 app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
+
+app.jinja_env.filters["usd"] = usd
 
 
 @app.after_request
