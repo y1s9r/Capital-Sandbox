@@ -24,7 +24,7 @@ def lookup(symbol):
         if numpy.isnan(price):
             return None
         return {"price": price, "symbol": symbol}
-    except (ValueError, TypeError, AssertionError) as e:
+    except (ValueError, TypeError, AssertionError, KeyError) as e:
         print(f"Error retrieving data for {symbol}: {e}")
         return None
     
